@@ -1,9 +1,18 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
-require('dotenv').config();
-console.log('Database', process.env.MYSQL_DATABASE);
+import { Logger, ValidationPipe } from '@nestjs/common';
+import * as morgan from 'morgan';
+
 async function bootstrap() {
+  const logger = new Logger('Main');
   const app = await NestFactory.create(AppModule);
-  await app.listen(3000);
+  app.useGlobalPipes(new ValidationPipe());
+  app.use(morgan('tiny'));
+  await app
+    .listen(process.env.PORT || 2023)
+    .then(() => logger.log(`Demo Credit API is listening on: port:${process.env.PORT}`))
+    .catch((err) => {
+      logger.error('>>> App error: ', err);
+    });
 }
 bootstrap();

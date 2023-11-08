@@ -1,26 +1,34 @@
-import { Injectable } from '@nestjs/common';
-import { CreateUserDto } from './dto/create-user.dto';
-import { UpdateUserDto } from './dto/update-user.dto';
+import { BadRequestException, Injectable, Logger, NotFoundException } from '@nestjs/common';
+
+import db from '../config/index';
+const logger = new Logger('UsersService');
 
 @Injectable()
 export class UsersService {
-  create(createUserDto: CreateUserDto) {
-    return 'This action adds a new user';
+  async findOneByEmail(email: string) {
+    return await db.table('users').where('email', email);
   }
 
-  findAll() {
-    return `This action returns all users`;
+  async findUserProfileById(userId: number) {
+    if (!userId) {
+      throw new BadRequestException('User ID is required');
+    }
+
+    const userProfile = await db.table('users').select('id', 'firstName', 'lastName', 'email', 'phoneNumber').where('id', userId).first();
+
+    if (!userProfile) {
+      throw new NotFoundException(`User with ID ${userId} not found`);
+    }
+
+    const walletData = await db.table('wallets').select('id', 'balance').where('userId', userId).first();
+
+    userProfile.wallet = walletData;
+    return userProfile;
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} user`;
-  }
+  async updateProfile(userId: number, updateData: { firstName?: string; lastName?: string; phoneNumber?: string }) {
+    const updatedProfile = await db.table('users').where('id', userId).update(updateData);
 
-  update(id: number, updateUserDto: UpdateUserDto) {
-    return `This action updates a #${id} user`;
-  }
-
-  remove(id: number) {
-    return `This action removes a #${id} user`;
+    return updatedProfile;
   }
 }

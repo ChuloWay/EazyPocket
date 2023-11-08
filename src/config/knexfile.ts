@@ -1,12 +1,11 @@
 const path = require('path');
 import { Knex } from 'knex';
 
-// Set the path to the .env file
 const envPath = path.join(__dirname, '..', '..', '.env');
 require('dotenv').config({ path: envPath });
 
 const config: Record<string, Knex.Config> = {
-  testing: {
+  test: {
     client: 'mysql2',
     connection: {
       host: process.env.MYSQL_HOST,

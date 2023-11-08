@@ -1,34 +1,36 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body, Next, Req, Res, HttpStatus, HttpException } from '@nestjs/common';
 import { AuthService } from './auth.service';
-import { CreateAuthDto } from './dto/create-auth.dto';
-import { UpdateAuthDto } from './dto/update-auth.dto';
+import { RegisterUserDto } from './dto/register-user..dto';
+import { LoginUserDTO } from './dto/login-user.dto.';
 
 @Controller('auth')
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
-  @Post()
-  create(@Body() createAuthDto: CreateAuthDto) {
-    return this.authService.create(createAuthDto);
+  @Post('register')
+  async register(@Body() userDto: RegisterUserDto, @Res() res): Promise<void> {
+    try {
+      await this.authService.registerUser(userDto);
+      return res.status(HttpStatus.OK).json({
+        statusCode: HttpStatus.OK,
+        message: 'User Created',
+      });
+    } catch (error) {
+      throw new HttpException('Reason: ' + error.message, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
   }
 
-  @Get()
-  findAll() {
-    return this.authService.findAll();
-  }
-
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.authService.findOne(+id);
-  }
-
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateAuthDto: UpdateAuthDto) {
-    return this.authService.update(+id, updateAuthDto);
-  }
-
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.authService.remove(+id);
+  @Post('login')
+  async login(@Body() body: LoginUserDTO, @Res() res, @Req() req, @Next() next) {
+    try {
+      const user = await this.authService.login(body);
+      return res.status(HttpStatus.OK).json({
+        statusCode: HttpStatus.OK,
+        data: user,
+        message: 'success',
+      });
+    } catch (error) {
+      next(error);
+    }
   }
 }
