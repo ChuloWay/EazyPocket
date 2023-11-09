@@ -33,7 +33,7 @@ The project is implemented using NodeJS, TypeScript, and KnexJS ORM for database
 
 ### Entity Relation Diagram
 
-![ERD Diagram](https://raw.githubusercontent.com/ChuloWay/Lendsqr-demo-credit-wallet/main/src/utils/assets/erd.png)
+![ERD Diagram](https://raw.githubusercontent.com/ChuloWay/Lendsqr-demo-credit-wallet/dev/src/utils/assets/erd.png)
 
 ## Getting Started
 
@@ -128,7 +128,7 @@ npx jest --testPathPattern=wallet.controller.spec.ts
 
 ## Deployment
 
-The Live Backend API is hosted on Render.
+The Live Backend API is hosted on Render. [API LINK](https://victor-okoye-lendsqr-be-test.onrender.com)
 
 ## License
 
