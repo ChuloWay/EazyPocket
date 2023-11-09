@@ -1,4 +1,4 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { BadRequestException, Injectable, Logger } from '@nestjs/common';
 import db from '../config/index';
 import { FundWalletDto } from './dto/fund-wallet.dto';
 import { TransferFundDto } from './dto/transfer.dto';
@@ -7,23 +7,23 @@ const logger = new Logger('WalletService');
 
 @Injectable()
 export class WalletService {
-  async fundAccount(userId: number, walletDto: FundWalletDto): Promise<{ user: { id: number; balance: number } }> {
+  async fundAccount(userId: any, walletDto: FundWalletDto): Promise<{ user: { id: any; balance: any } }> {
     try {
       const { amount } = walletDto;
-      return await db.transaction(async (trx) => {
-        const user = await db('users')
+
+      // Use the knex.transaction method directly
+      const result = await db.transaction(async (trx) => {
+        // Use destructuring to simplify code
+        const [user] = await trx('users')
           .join('wallets', 'users.id', 'wallets.userId')
           .where('users.id', userId)
-          .select('users.id as userId', 'wallets.id as walletId', 'wallets.balance')
-          .first();
+          .select('users.id as userId', 'wallets.id as walletId', 'wallets.balance');
 
+        // Check if the user exists
         if (!user) {
           throw new Error('User not found');
         }
 
-        if (!user.hasOwnProperty('balance')) {
-          throw new Error('User balance not found');
-        }
         // Update the user's balance
         const updatedBalance = user.balance + amount;
 
@@ -34,11 +34,12 @@ export class WalletService {
         await trx('transactions').insert({
           senderId: null,
           receiverId: user.walletId,
-          amount: amount,
+          amount,
           type: 'CREDIT',
           description: 'Funding wallet',
         });
 
+        // Return the updated user information
         return {
           user: {
             id: user.userId,
@@ -46,31 +47,37 @@ export class WalletService {
           },
         };
       });
+
+      return result;
     } catch (error) {
-      logger.error('Error creating user: ' + error.message);
+      // logger.error(`Error funding account: ${error.message}`);
       throw new Error('Failed to fund the account');
     }
   }
 
-  async transferFunds(senderId: number, transferDto: TransferFundDto): Promise<void> {
+  async transferFunds(
+    senderId: any,
+    transferDto: TransferFundDto,
+  ): Promise<{ sender: { id: number; balance: number }; receiver: { id: number; balance: number } }> {
     try {
       const { receiverId, amount } = transferDto;
 
-      await db.transaction(async (trx) => {
-        const senderBalance = await db('users')
+      // Use the knex.transaction method directly
+      const result = await db.transaction(async (trx) => {
+        // Use destructuring to simplify code for sender's balance
+        const [senderBalance] = await trx('users')
           .join('wallets', 'users.id', 'wallets.userId')
           .where('users.id', senderId)
-          .select('users.id as senderId', 'wallets.id as walletId', 'wallets.balance')
-          .first();
+          .select('users.id as senderId', 'wallets.id as walletId', 'wallets.balance');
 
         // Check if the sender has enough funds
         if (!senderBalance || senderBalance.balance < amount) {
           throw new Error('Insufficient funds');
         }
 
-        //check that user is not sending money to his own wallet
+        // Check if the transfer is not to the sender's own wallet
         if (senderId === receiverId) {
-          throw new Error('You cannot transfer to yourself');
+          throw new BadRequestException('You cannot transfer to yourself');
         }
 
         // Deduct the transfer amount from the sender's balance
@@ -78,11 +85,10 @@ export class WalletService {
         await trx('wallets').where('userId', senderId).update({ balance: updatedSenderBalance });
 
         // Add the transfer amount to the recipient's balance
-        const recipientBalance = await db('users')
+        const [recipientBalance] = await trx('users')
           .join('wallets', 'users.id', 'wallets.userId')
           .where('users.id', receiverId)
-          .select('users.id as receiverId', 'wallets.id as walletId', 'wallets.balance')
-          .first();
+          .select('users.id as receiverId', 'wallets.id as walletId', 'wallets.balance');
 
         const updatedRecipientBalance = recipientBalance.balance + amount;
         await trx('wallets').where('userId', receiverId).update({ balance: updatedRecipientBalance });
@@ -98,30 +104,49 @@ export class WalletService {
 
         // Create a transaction record for the recipient
         await trx('transactions').insert({
-          senderId: null, // Recipient's transaction has no sender
+          senderId: null,
           receiverId: recipientBalance.walletId,
           amount,
           type: 'CREDIT',
           description: `Received ${amount} from user ${senderId}`,
         });
+
+        // Return information about the sender and recipient
+        return {
+          sender: {
+            id: senderBalance.senderId,
+            balance: updatedSenderBalance,
+          },
+          receiver: {
+            id: recipientBalance.receiverId,
+            balance: updatedRecipientBalance,
+          },
+        };
       });
+
+      return result; // Return the result outside the transaction callback
     } catch (error) {
-      logger.error('Error in transfering: ' + error.message);
+      // Use logger.error with a template string
+      // logger.error(`Error transferring funds: ${error.message}`);
+
+      // Rethrow the error with a custom message
       throw new Error('Failed to transfer funds');
     }
   }
 
-  async withdrawFunds(userId: number, withdrawDto: WithdrawFundDto): Promise<void> {
+  async withdrawFunds(userId: any, withdrawDto: WithdrawFundDto): Promise<{ user: { id: number; balance: number } }> {
     try {
       const { amount } = withdrawDto;
-      await db.transaction(async (trx) => {
-        const userBalance = await db('users')
+
+      // Use the knex.transaction method directly
+      const result = await db.transaction(async (trx) => {
+        // Use destructuring to simplify code for user's balance
+        const [userBalance] = await trx('users')
           .join('wallets', 'users.id', 'wallets.userId')
           .where('users.id', userId)
-          .select('users.id as userId', 'wallets.id as walletId', 'wallets.balance')
-          .first();
+          .select('users.id as userId', 'wallets.id as walletId', 'wallets.balance');
 
-        // Check if the sender has enough funds
+        // Check if the user has enough funds
         if (!userBalance || userBalance.balance < amount) {
           throw new Error('Insufficient funds');
         }
@@ -130,7 +155,7 @@ export class WalletService {
         const updatedUserBalance = userBalance.balance - amount;
         await trx('wallets').where('userId', userId).update({ balance: updatedUserBalance });
 
-        // Create a transaction record for the transfer
+        // Create a transaction record for the withdrawal
         await trx('transactions').insert({
           senderId: userBalance.walletId,
           receiverId: null,
@@ -138,9 +163,22 @@ export class WalletService {
           type: 'WITHDRAWAL',
           description: `Withdrew ${amount} to user ${userId}`,
         });
+
+        // Return updated user information
+        return {
+          user: {
+            id: userBalance.userId,
+            balance: updatedUserBalance,
+          },
+        };
       });
+
+      return result; // Return the result outside the transaction callback
     } catch (error) {
-      logger.error('Error in withdrawal: ' + error.message);
+      // Use logger.error with a template string
+      logger.error(`Error withdrawing funds: ${error.message}`);
+
+      // Rethrow the error with a custom message
       throw new Error('Failed to withdraw funds');
     }
   }

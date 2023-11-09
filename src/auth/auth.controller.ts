@@ -8,29 +8,22 @@ export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
   @Post('register')
-  async register(@Body() userDto: RegisterUserDto, @Res() res): Promise<void> {
+  async register(@Body() userDto: RegisterUserDto): Promise<{ message: string }> {
     try {
       await this.authService.registerUser(userDto);
-      return res.status(HttpStatus.OK).json({
-        statusCode: HttpStatus.OK,
-        message: 'User Created',
-      });
+      return { message: 'User Created' };
     } catch (error) {
       throw new HttpException('Reason: ' + error.message, HttpStatus.INTERNAL_SERVER_ERROR);
     }
   }
 
   @Post('login')
-  async login(@Body() body: LoginUserDTO, @Res() res, @Req() req, @Next() next) {
+  async login(@Body() body: LoginUserDTO) {
     try {
       const user = await this.authService.login(body);
-      return res.status(HttpStatus.OK).json({
-        statusCode: HttpStatus.OK,
-        data: user,
-        message: 'success',
-      });
+      return user;
     } catch (error) {
-      next(error);
+      throw new HttpException('Reason: ' + error.message, HttpStatus.INTERNAL_SERVER_ERROR);
     }
   }
 }

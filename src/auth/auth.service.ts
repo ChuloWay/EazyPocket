@@ -22,7 +22,7 @@ export class AuthService {
    * @throws {BadRequestException} Throws an exception if the user with the same email already exists.
    * @throws {Error} Throws an error if any other error occurs during the registration process.
    */
-  async registerUser(userDto: RegisterUserDto): Promise<void> {
+  async registerUser(userDto: RegisterUserDto): Promise<string> {
     const { firstName, lastName, email, password, phoneNumber } = userDto;
 
     try {
@@ -56,6 +56,7 @@ export class AuthService {
       };
 
       await db.table('wallets').insert(newWallet);
+      return 'User Created';
     } catch (error) {
       logger.error('Error creating user: ' + error.message);
       throw new Error('Error creating user');

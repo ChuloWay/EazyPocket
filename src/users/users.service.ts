@@ -9,7 +9,7 @@ export class UsersService {
     return await db.table('users').where('email', email);
   }
 
-  async findUserProfileById(userId: number) {
+  async findUserProfileById(userId: any) {
     if (!userId) {
       throw new BadRequestException('User ID is required');
     }
@@ -24,11 +24,5 @@ export class UsersService {
 
     userProfile.wallet = walletData;
     return userProfile;
-  }
-
-  async updateProfile(userId: number, updateData: { firstName?: string; lastName?: string; phoneNumber?: string }) {
-    const updatedProfile = await db.table('users').where('id', userId).update(updateData);
-
-    return updatedProfile;
   }
 }

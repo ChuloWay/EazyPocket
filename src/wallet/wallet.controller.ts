@@ -1,6 +1,6 @@
 import { Controller, Post, Body, UseGuards, Req, Res, Next, HttpStatus, BadRequestException } from '@nestjs/common';
 import { WalletService } from './wallet.service';
-import { JwtAuthGuard } from 'src/auth/strategy/jwt-guard';
+import { JwtAuthGuard } from '../auth/strategy/jwt-guard';
 
 @Controller('wallet')
 @UseGuards(JwtAuthGuard)
@@ -20,7 +20,6 @@ export class WalletController {
       });
     } catch (error) {
       next(error);
-      throw new BadRequestException('Failed to fund the account');
     }
   }
 
@@ -29,9 +28,10 @@ export class WalletController {
     try {
       const userObject = req.user;
       const { id } = userObject;
-      await this.walletService.transferFunds(id, body);
+      const data = await this.walletService.transferFunds(id, body);
       return res.status(HttpStatus.OK).json({
         statusCode: HttpStatus.OK,
+        data,
         message: 'Funds transferred successfully',
       });
     } catch (error) {
@@ -45,9 +45,10 @@ export class WalletController {
     try {
       const userObject = req.user;
       const { id } = userObject;
-      await this.walletService.withdrawFunds(id, body);
+      const data = await this.walletService.withdrawFunds(id, body);
       return res.status(HttpStatus.OK).json({
         statusCode: HttpStatus.OK,
+        data,
         message: 'Funds withdrawn successfully',
       });
     } catch (error) {
