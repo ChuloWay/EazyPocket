@@ -40,7 +40,7 @@ Ensure the following packages are installed locally:
 1. [MySQL](https://dev.mysql.com/downloads/installer/)
 2. [Node (LTS Version)](https://nodejs.org)
 3. [NPM](https://docs.npmjs.com/downloading-and-installing-node-js-and-npm)
-4. NestJS CLI: `npm install nestcli -g`
+4. NestJS CLI: `npm install @nestcli -g`
 
 ### Setup Steps
 
