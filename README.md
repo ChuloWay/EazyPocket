@@ -1,12 +1,8 @@
-# Welcome to Demo Credit Backend Project!
+# Welcome to EazyPocket A Backend Project!
 
 ## Introduction
 
-Demo Credit is a fintech project designed for efficient loan management. This comprehensive README will assist you in setting up the project, understanding its structure, and exploring the API.
-
-### Assessment Details
-
-- [View the assessment requirements](/task.md)
+A fintech project designed for efficient loan management. This comprehensive README will assist you in setting up the project, understanding its structure, and exploring the API.
 
 ## Project Overview
 
@@ -33,7 +29,7 @@ The project is implemented using NodeJS, TypeScript, and KnexJS ORM for database
 
 ### Entity Relation Diagram
 
-![ERD Diagram](https://raw.githubusercontent.com/ChuloWay/Lendsqr-demo-credit-wallet/dev/src/utils/assets/erd.png)
+![ERD Diagram](https://raw.githubusercontent.com/ChuloWay/EazyPocket/dev/src/utils/assets/erd.png)
 
 ## Getting Started
 
@@ -51,7 +47,7 @@ Ensure the following packages are installed locally:
 1. **Clone the repo**
 
    ```bash
-   git clone https://github.com/ChuloWay/Lendsqr-demo-credit-wallet
+   git clone https://github.com/ChuloWay/EazyPocket
    ```
 
 2. **Create an env file:**
@@ -125,10 +121,6 @@ npx jest --testPathPattern=wallet.service.spec.ts
 ```bash
 npx jest --testPathPattern=wallet.controller.spec.ts
 ```
-
-## Deployment
-
-The Live Backend API is hosted on Render. [API LINK](https://victor-okoye-lendsqr-be-test.onrender.com)
 
 ## License
 

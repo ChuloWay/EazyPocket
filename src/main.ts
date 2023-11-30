@@ -11,7 +11,7 @@ async function bootstrap() {
   app.setGlobalPrefix('api/v1');
   await app
     .listen(process.env.PORT || 2023)
-    .then(() => logger.log(`Demo Credit API is listening on: port:${process.env.PORT}`))
+    .then(() => logger.log(`EazyPocket API is listening on: port:${process.env.PORT}`))
     .catch((err) => {
       logger.error('>>> App error: ', err);
     });
