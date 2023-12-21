@@ -1,35 +1,30 @@
-# Welcome to EazyPocket A Backend Project!
 
 ## Introduction
 
-A fintech project designed for efficient loan management. This comprehensive README will assist you in setting up the project, understanding its structure, and exploring the API.
+This Content Management System (CMS) is a web application designed to manage and organize content efficiently. Users can sign up, create posts, manage post categories, and admins have access to a real-time dashboard to monitor events within the application.
 
 ## Project Overview
 
 ## Features
 
-1. **Account Creation**
+1. **User Authentication:**
+   - Users can sign up and log in securely to access CMS features.
 
-   - Users can create an account.
+2. **Post Management:**
+   - Create, update, and delete posts.
+   - Organize posts using categories.
 
-2. **Funding**
+3. **Category Management:**
+   - Create, update, and delete post categories.
 
-   - Users can fund their wallet accounts.
-
-3. **Funds Transfer**
-
-   - Users can transfer funds to another user's wallet.
-
-4. **Withdrawal**
-   - Users can withdraw funds from their own wallet.
+4. **Admin Dashboard:**
+   - Real-time dashboard for admins to monitor user activities.
+   - Uses WebSockets to provide live updates.
 
 ## Implementation Details
 
-The project is implemented using NodeJS, TypeScript, and KnexJS ORM for database interactions. The chosen database is MySQL.
+The project is implemented using NodeJS, NestJs, TypeScript, and TypeORM for database interactions. The chosen database is PostGresql.
 
-### Entity Relation Diagram
-
-![ERD Diagram](https://raw.githubusercontent.com/ChuloWay/EazyPocket/dev/src/utils/assets/erd.png)
 
 ## Getting Started
 
@@ -37,7 +32,7 @@ The project is implemented using NodeJS, TypeScript, and KnexJS ORM for database
 
 Ensure the following packages are installed locally:
 
-1. [MySQL](https://dev.mysql.com/downloads/installer/)
+1. [Postgres](https://www.postgresql.org/download/)
 2. [Node (LTS Version)](https://nodejs.org)
 3. [NPM](https://docs.npmjs.com/downloading-and-installing-node-js-and-npm)
 4. NestJS CLI: `npm install @nestcli -g`
@@ -47,7 +42,7 @@ Ensure the following packages are installed locally:
 1. **Clone the repo**
 
    ```bash
-   git clone https://github.com/ChuloWay/EazyPocket
+   git clone https://github.com/ChuloWay/HackCity-Project
    ```
 
 2. **Create an env file:**
@@ -65,7 +60,7 @@ Ensure the following packages are installed locally:
 3. **Run migration:**
 
    ```bash
-   npm run migrate:latest
+   npm run apply:migration
    ```
 
 4. **Start your server:**
@@ -76,55 +71,8 @@ Ensure the following packages are installed locally:
 
 ## API Documentation
 
-Explore the API documentation at - [API Postman Documentation](https://documenter.getpostman.com/view/25293109/2s9YXiZgtX)s.
+Explore the API documentation at - [API Postman Documentation](https://documenter.getpostman.com/view/24154143/2s9YeN3pPV)s.
 
-## Testing
-
-### Unit Testing
-
-Unit tests cover positive and negative test scenarios to ensure robust functionality.
-
-Test the API endpoints using Postman. Additionally, you can run specific Jest tests for each service.
-
-### User Service And Controller
-
-Run the following command to test the User Service:
-
-```bash
-npx jest --testPathPattern=users.service.spec.ts
-```
-
-```bash
-npx jest --testPathPattern=users.controller.spec.ts
-```
-
-### Auth Service And Controller
-
-Run the following command to test the Auth Functionalities:
-
-```bash
-npx jest --testPathPattern=auth.service.spec.ts
-```
-
-```bash
-npx jest --testPathPattern=auth.controller.spec.ts
-```
-
-### Wallet Service And Controller
-
-Run the following command to test the Wallet Functionalities:
-
-```bash
-npx jest --testPathPattern=wallet.service.spec.ts
-```
-
-```bash
-npx jest --testPathPattern=wallet.controller.spec.ts
-```
-
-## License
-
-This project is licensed under the MIT License.
 
 ## Acknowledgements
 
@@ -132,9 +80,10 @@ Special thanks to:
 
 - NestJS
 - TypeScript
-- MySQL
-- Knex ORM
+- PostGres
+- TypeORM
 - JSON Web Tokens
+- Websocket
 - PostMan
 
 ## Conclusion
