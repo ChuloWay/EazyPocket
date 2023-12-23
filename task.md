@@ -20,6 +20,9 @@ The MVP wallet service must support the following functionalities:
 4. **Withdraw Funds:**
     - Users can withdraw funds from their accounts.
 
+## Future Use case
+-- Credit Score System
+
 ## Tech Stack
 
 - NodeJS (LTS version)
